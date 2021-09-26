@@ -9,61 +9,44 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="style.css">
-  <title>Jogo da Forca</title>
+  <title>Jogo da Forca 2</title>
 </head>
 
 <body>
   <main>
     <div id="game">
       <div>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/International_Pok%C3%A9mon_logo.svg" alt="Pokemon Logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/International_Pok%C3%A9mon_logo.svg"
+          alt="Pokemon Logo">
       </div>
       <h2>Jogo da forca</h2>
-      <div id="ganhou">
-        Parabéns você ganhou!
+      <div id="letras">
       </div>
-      <div id="perdeu">
-        Você perdeu!
+      <div id="input">
+        <label for="letra">Digite uma letra</label>
+        <input type="text" id="letra">
+        <button class="btn btn-primary" id="enviar" onclick="enviarLetra()">Enviar</button>
       </div>
-      <button id="button" onclick="playGame()">Iniciar Jogo</button>
+      <div id="letras-usadas">
+      </div>
+      <div id="resultado">
+        <div id="ganhou">
+          Você ganhou!
+        </div>
+        <div id="perdeu">
+          Você perdeu!
+        </div>
+      </div>
+      <div id="button">
+        <button class="btn btn-primary" onclick="playGame()">Iniciar Jogo</button>
+      </div>
     </div>
   </main>
 </body>
 <script>
-  window.document.onload = ocultarResultado();
+  window.document.onload = ocultarElementos("input"), ocultarElementos("ganhou"), ocultarElementos("perdeu"), ocultarElementos("letras");
+
   const endPoint = "https://pokeapi.co/api/v2/pokemon/";
-  const forca = [
-    `    _______
-    |       O
-    |       /|\\
-    |       / \\
-    |`,
-    `    _______
-    |       O
-    |       /|\\
-    |       / 
-    |`,
-    `    _______
-    |       O
-    |       /|\\
-    |    
-    |`,
-    `    _______
-    |       O
-    |       /|
-    |
-    |`,
-    `    _______
-    |       O
-    |        |
-    |    
-    |`,
-    `    _______
-    |       O
-    |    
-    |    
-    |`
-  ];
   let palavras;
   let letrasUsadas;
   let numeroTentativas;
@@ -72,7 +55,7 @@
   let palavra;
   let palavraEncontrada;
   let palavraBuscada;
-  let jogar;
+  let terminou;
   let ganhou;
 
   // Obter lista de Pokemons (Somente 20 itens)
@@ -85,30 +68,25 @@
   // Função principal do jogo
   async function playGame() {
     await inicializarVariaveis();
-    let letra;
-    while (jogar) {
-      letra = obterLetra();
-      if (letra === null) {
-        jogar = false;
-      } else {
-        buscarLetra(letra);
-        verificarFimPartida();
-      }
-    }
-    exibirResultado(ganhou);
+    exibirElemento("input");
+    exibirPalavra();
+    ocultarElementos("button");
+    ocultarElementos("ganhou");
+    ocultarElementos("perdeu");
+    console.log(palavras);
   }
 
-  // Obter letra 
-  function obterLetra() {
-    let letraObtida;
-    let dica;
-    do {
-      dica = palavraEncontrada.toString().replaceAll(",", " ");
-      letraObtida = prompt(
-        `Dica: ${dica}\nNúmero de tentativas restante: ${numeroTentativasRestante}\nLetras utilizadas: ${letrasUsadas}\nDigite uma letra:`
-      );
-    } while (validarLetra(letraObtida));
-    return letraObtida !== null ? letraObtida.toLocaleLowerCase() : null;
+  function enviarLetra() {
+    let letra = document.getElementById("letra").value;
+    document.getElementById("letra").value = "";
+    console.log(letra);
+    validarLetra(letra);
+    verificarFimPartida();
+
+    if (terminou) {
+      exibirResultado();
+    }
+
   }
 
   function validarLetra(letra) {
@@ -116,22 +94,18 @@
       'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
     ];
 
-    if (letra !== null) {
+    if (letra !== "") {
       if (caracteresValidos.includes(letra.toLocaleLowerCase())) {
         if (letrasUsadas.includes(letra.toLocaleLowerCase())) {
           alert("Letra já utilizada!");
-          return true;
+        } else {
+          buscarLetra(letra);
         }
-        return false;
-      } else if (letra.trim().length === 0) {
-        alert("Informe algum valor!");
-        return true;
       } else {
         alert("Digite uma letra!");
-        return true; // Caso o valor não pertença no array
       }
     } else {
-      return false; // Retorno do botão cancelar do prompt
+      alert("Digite uma letra!");
     }
   }
 
@@ -147,21 +121,24 @@
         }
       }
       letrasUsadas.push(letra);
+      console.log("encontrei");
+      exibirPalavra();
     } else {
       letrasUsadas.push(letra);
       numeroTentativasRestante--;
       numeroJogadasErradas++;
-      alert(`${forca[numeroTentativasRestante]}
-      Letra não encontrada!`);
+      alert(`Letra não encontrada!`);
     }
+    exibirLetrasUsadas();
   }
 
   function verificarFimPartida() {
     if (palavraBuscada.length > 0 && numeroJogadasErradas === numeroTentativas) {
-      jogar = false;
       ganhou = false;
+      terminou = true;
+      console.log("acabou");
     } else if (palavraBuscada.length === 0 && numeroJogadasErradas <= numeroTentativas) {
-      jogar = false;
+      terminou = true;
       ganhou = true;
     }
   }
@@ -175,17 +152,17 @@
     }
 
     palavra = palavras[Math.floor((Math.random() * palavras.length))];
-    palavraEncontrada = palavra.split('').map(() => '');
+    palavraEncontrada = palavra.split('').map(() => '_');
     palavraBuscada = palavra;
     letrasUsadas = [];
     numeroTentativas = 6;
     numeroTentativasRestante = 6;
     numeroJogadasErradas = 0;
-    jogar = true;
+    terminou = false;
     ganhou = false;
   }
 
-  function exibirResultado(ganhou) {
+  function exibirResultado() {
     if (ganhou) {
       document.getElementById("ganhou").style.display = "block";
       document.getElementById("perdeu").style.display = "none";
@@ -193,11 +170,27 @@
       document.getElementById("perdeu").style.display = "block";
       document.getElementById("ganhou").style.display = "none";
     }
+    ocultarElementos("input");
+    exibirElemento("button");
   }
 
-  function ocultarResultado() {
-    document.getElementById("ganhou").style.display = "none";
-    document.getElementById("perdeu").style.display = "none";
+  function ocultarElementos(elemento) {
+    document.getElementById(elemento).style.display = "none";
+  }
+
+  function exibirElemento(elemento) {
+    document.getElementById(elemento).style.display = "block";
+  }
+
+  function exibirPalavra() {
+    let dica = palavraEncontrada.toString().replaceAll(",", " ");
+    document.getElementById("letras").innerHTML = dica;
+    exibirElemento("letras");
+  }
+
+  function exibirLetrasUsadas() {
+    document.getElementById("letras-usadas").innerHTML = "Letras utilizadas:" + letrasUsadas;
+    exibirElemento("letras-usadas");
   }
 </script>
 
