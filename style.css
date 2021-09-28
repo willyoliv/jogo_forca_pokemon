@@ -6,8 +6,9 @@ body {
   height: 100%;
   width: 100%;
   font-family: 'Press Start 2P';
-  /* font-size: 22px; */
+  font-size: 20px !important;
 }
+
 main {
   height: 100%;
   display: flex;
@@ -17,24 +18,46 @@ main {
 
 #game {
   padding: 20px;
-  width: 650px;
-  height: 200px;
+  width: 580px;
+  height: 720px;
   border-radius: 20px;
   text-align: center;
 }
 
-#letras-usadas {
+#forca img {
   margin: 20px;
-  text-align: left;
+  width: 150px;
+  height: 150px;
+}
+
+#pokemon img {
+  margin: auto;
+  width: 150px;
+  height: 150px;
+
+}
+#letra {
+  margin-bottom: 5px;
 }
 
 #letras {
+  font-size: .8em;
   margin: 20px;
   color: blue;
 }
+#input {
+  font-size: .7em !important;
+}
+
+#letras-usadas {
+  margin: 20px;
+  text-align: justify;
+  font-size: .6em;
+}
 
 #resultado {
-  margin: 30px;
+  margin: 20px;
+  font-size: .9em;
 }
 
 #ganhou {
@@ -45,10 +68,9 @@ main {
   color: red;
 }
 
-#button {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  margin: 30px;
+#btn-enviar {
+  font-size: 15px !important;
 }
-
+#button {
+  margin: auto;
+}
